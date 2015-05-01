@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\GeoTool.cpp" />
+    <ClCompile Include="..\src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\GeoTool.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8E76AEAA-D939-43C1-82FF-6B673F852DEA}</ProjectGuid>
+    <RootNamespace>gisrasteranalysis</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)..\bin\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\bin\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)..\bin\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\bin\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\dev\libs\opencv249\build32;C:\dev\libs\opencv249\include;C:\dev\libs\opencv249\include\opencv;C:\dev\libs\opencv249\modules\core\include;C:\dev\libs\opencv249\modules\flann\include;C:\dev\libs\opencv249\modules\imgproc\include;C:\dev\libs\opencv249\modules\highgui\include;C:\dev\libs\opencv249\modules\features2d\include;C:\dev\libs\opencv249\modules\calib3d\include;C:\dev\libs\opencv249\modules\ml\include;C:\dev\libs\opencv249\modules\video\include;C:\dev\libs\opencv249\modules\legacy\include;C:\dev\libs\opencv249\modules\objdetect\include;C:\dev\libs\opencv249\modules\photo\include;C:\dev\libs\opencv249\modules\gpu\include;C:\dev\libs\opencv249\modules\ocl\include;C:\dev\libs\opencv249\modules\nonfree\include;C:\dev\libs\opencv249\modules\contrib\include;C:\dev\libs\opencv249\modules\stitching\include;C:\dev\libs\opencv249\modules\superres\include;C:\dev\libs\opencv249\modules\ts\include;C:\dev\libs\opencv249\modules\videostab\include;C:\dev\libs\gdal\include;C:\dev\libs\glut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\dev\libs\gdal\libs</AdditionalLibraryDirectories>
+      <AdditionalDependencies>C:\dev\libs\opencv249\build32\lib\Release\opencv_videostab249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_ts249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_superres249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_stitching249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_contrib249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_nonfree249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_ocl249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_gpu249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_photo249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_objdetect249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_legacy249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_video249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_ml249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_calib3d249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_features2d249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_highgui249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_imgproc249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_flann249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_core249.lib;C:\dev\libs\gdal\lib\cairo.lib;C:\dev\libs\gdal\lib\cfitsio.lib;C:\dev\libs\gdal\lib\clientlib.lib;C:\dev\libs\gdal\lib\expat.lib;C:\dev\libs\gdal\lib\fontconfig.lib;C:\dev\libs\gdal\lib\freetype2411.lib;C:\dev\libs\gdal\lib\freexl.lib;C:\dev\libs\gdal\lib\freexl_i.lib;C:\dev\libs\gdal\lib\fribidi.lib;C:\dev\libs\gdal\lib\gd.lib;C:\dev\libs\gdal\lib\gdal_i.lib;C:\dev\libs\gdal\lib\geos.lib;C:\dev\libs\gdal\lib\geos_c.lib;C:\dev\libs\gdal\lib\giflib.lib;C:\dev\libs\gdal\lib\harfbuzz.lib;C:\dev\libs\gdal\lib\hdf5.lib;C:\dev\libs\gdal\lib\hdf5_cpp.lib;C:\dev\libs\gdal\lib\hdf5_hl.lib;C:\dev\libs\gdal\lib\hdf5_hl_cpp.lib;C:\dev\libs\gdal\lib\hdfdll.lib;C:\dev\libs\gdal\lib\iconv.lib;C:\dev\libs\gdal\lib\libcurl_imp.lib;C:\dev\libs\gdal\lib\libeay32.lib;C:\dev\libs\gdal\lib\libecwj2.lib;C:\dev\libs\gdal\lib\libfcgi.lib;C:\dev\libs\gdal\lib\libjbig.lib;C:\dev\libs\gdal\lib\libjpeg.lib;C:\dev\libs\gdal\lib\libkea.lib;C:\dev\libs\gdal\lib\libkmlbase.lib;C:\dev\libs\gdal\lib\libkmlconvenience.lib;C:\dev\libs\gdal\lib\libkmldom.lib;C:\dev\libs\gdal\lib\libkmlengine.lib;C:\dev\libs\gdal\lib\libkmlregionator.lib;C:\dev\libs\gdal\lib\libkmlxsd.lib;C:\dev\libs\gdal\lib\libmysql.lib;C:\dev\libs\gdal\lib\libpng.lib;C:\dev\libs\gdal\lib\libpq.lib;C:\dev\libs\gdal\lib\libpqdll.lib;C:\dev\libs\gdal\lib\libsvg.lib;C:\dev\libs\gdal\lib\libsvg-cairo.lib;C:\dev\libs\gdal\lib\libtiff_i.lib;C:\dev\libs\gdal\lib\libxml2.lib;C:\dev\libs\gdal\lib\mapserver.lib;C:\dev\libs\gdal\lib\mfhdfdll.lib;C:\dev\libs\gdal\lib\minizip.lib;C:\dev\libs\gdal\lib\netcdf.lib;C:\dev\libs\gdal\lib\openjp2.lib;C:\dev\libs\gdal\lib\pixman-1.lib;C:\dev\libs\gdal\lib\poppler.lib;C:\dev\libs\gdal\lib\proj.lib;C:\dev\libs\gdal\lib\proj_i.lib;C:\dev\libs\gdal\lib\spatialite.lib;C:\dev\libs\gdal\lib\spatialite_i.lib;C:\dev\libs\gdal\lib\ssleay32.lib;C:\dev\libs\gdal\lib\szip.lib;C:\dev\libs\gdal\lib\xdrdll.lib;C:\dev\libs\gdal\lib\xerces-c_2.lib;C:\dev\libs\gdal\lib\zdll.lib;C:\dev\libs\gdal\lib\zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\dev\libs\opencv249\build32;C:\dev\libs\opencv249\include;C:\dev\libs\opencv249\include\opencv;C:\dev\libs\opencv249\modules\core\include;C:\dev\libs\opencv249\modules\flann\include;C:\dev\libs\opencv249\modules\imgproc\include;C:\dev\libs\opencv249\modules\highgui\include;C:\dev\libs\opencv249\modules\features2d\include;C:\dev\libs\opencv249\modules\calib3d\include;C:\dev\libs\opencv249\modules\ml\include;C:\dev\libs\opencv249\modules\video\include;C:\dev\libs\opencv249\modules\legacy\include;C:\dev\libs\opencv249\modules\objdetect\include;C:\dev\libs\opencv249\modules\photo\include;C:\dev\libs\opencv249\modules\gpu\include;C:\dev\libs\opencv249\modules\ocl\include;C:\dev\libs\opencv249\modules\nonfree\include;C:\dev\libs\opencv249\modules\contrib\include;C:\dev\libs\opencv249\modules\stitching\include;C:\dev\libs\opencv249\modules\superres\include;C:\dev\libs\opencv249\modules\ts\include;C:\dev\libs\opencv249\modules\videostab\include;C:\dev\libs\gdal\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\dev\libs\gdal\libs</AdditionalLibraryDirectories>
+      <AdditionalDependencies>C:\dev\libs\opencv249\build32\lib\Release\opencv_videostab249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_ts249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_superres249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_stitching249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_contrib249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_nonfree249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_ocl249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_gpu249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_photo249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_objdetect249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_legacy249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_video249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_ml249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_calib3d249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_features2d249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_highgui249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_imgproc249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_flann249.lib;C:\dev\libs\opencv249\build32\lib\Release\opencv_core249.lib;C:\dev\libs\gdal\lib\cairo.lib;C:\dev\libs\gdal\lib\cfitsio.lib;C:\dev\libs\gdal\lib\clientlib.lib;C:\dev\libs\gdal\lib\expat.lib;C:\dev\libs\gdal\lib\fontconfig.lib;C:\dev\libs\gdal\lib\freetype2411.lib;C:\dev\libs\gdal\lib\freexl.lib;C:\dev\libs\gdal\lib\freexl_i.lib;C:\dev\libs\gdal\lib\fribidi.lib;C:\dev\libs\gdal\lib\gd.lib;C:\dev\libs\gdal\lib\gdal_i.lib;C:\dev\libs\gdal\lib\geos.lib;C:\dev\libs\gdal\lib\geos_c.lib;C:\dev\libs\gdal\lib\giflib.lib;C:\dev\libs\gdal\lib\harfbuzz.lib;C:\dev\libs\gdal\lib\hdf5.lib;C:\dev\libs\gdal\lib\hdf5_cpp.lib;C:\dev\libs\gdal\lib\hdf5_hl.lib;C:\dev\libs\gdal\lib\hdf5_hl_cpp.lib;C:\dev\libs\gdal\lib\hdfdll.lib;C:\dev\libs\gdal\lib\iconv.lib;C:\dev\libs\gdal\lib\libcurl_imp.lib;C:\dev\libs\gdal\lib\libeay32.lib;C:\dev\libs\gdal\lib\libecwj2.lib;C:\dev\libs\gdal\lib\libfcgi.lib;C:\dev\libs\gdal\lib\libjbig.lib;C:\dev\libs\gdal\lib\libjpeg.lib;C:\dev\libs\gdal\lib\libkea.lib;C:\dev\libs\gdal\lib\libkmlbase.lib;C:\dev\libs\gdal\lib\libkmlconvenience.lib;C:\dev\libs\gdal\lib\libkmldom.lib;C:\dev\libs\gdal\lib\libkmlengine.lib;C:\dev\libs\gdal\lib\libkmlregionator.lib;C:\dev\libs\gdal\lib\libkmlxsd.lib;C:\dev\libs\gdal\lib\libmysql.lib;C:\dev\libs\gdal\lib\libpng.lib;C:\dev\libs\gdal\lib\libpq.lib;C:\dev\libs\gdal\lib\libpqdll.lib;C:\dev\libs\gdal\lib\libsvg.lib;C:\dev\libs\gdal\lib\libsvg-cairo.lib;C:\dev\libs\gdal\lib\libtiff_i.lib;C:\dev\libs\gdal\lib\libxml2.lib;C:\dev\libs\gdal\lib\mapserver.lib;C:\dev\libs\gdal\lib\mfhdfdll.lib;C:\dev\libs\gdal\lib\minizip.lib;C:\dev\libs\gdal\lib\netcdf.lib;C:\dev\libs\gdal\lib\openjp2.lib;C:\dev\libs\gdal\lib\pixman-1.lib;C:\dev\libs\gdal\lib\poppler.lib;C:\dev\libs\gdal\lib\proj.lib;C:\dev\libs\gdal\lib\proj_i.lib;C:\dev\libs\gdal\lib\spatialite.lib;C:\dev\libs\gdal\lib\spatialite_i.lib;C:\dev\libs\gdal\lib\ssleay32.lib;C:\dev\libs\gdal\lib\szip.lib;C:\dev\libs\gdal\lib\xdrdll.lib;C:\dev\libs\gdal\lib\xerces-c_2.lib;C:\dev\libs\gdal\lib\zdll.lib;C:\dev\libs\gdal\lib\zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
