@@ -19,22 +19,36 @@
 const float RAD2DEG = 180.0 / 3.14159;
 const float DEG2RAD = 3.14159 / 180.0;
 
-enum Options
+enum Methods
 {
-    OPT_SLOPE,
-    OPT_SHADED_RELIEF,
+    METHOD_SLOPE,
+    METHOD_SHADED_RELIEF,
     
-    NUM_OPTIONS
+    NUM_METHODS
 };
 
 struct Info
 {
     double min_value, max_value;
+
+    std::string input_filename;
+
     int32_t width = GT_NO_IMAGE;
     int32_t height = GT_NO_IMAGE;
     int32_t offset_x = GT_NO_IMAGE;
     int32_t offset_y = GT_NO_IMAGE;
+
+    float null_value;
+
+    double geo_transform[6];
 };
+
+// north-south resolution
+#define NS_RES geo_transform[5]
+// east-west resolution
+#define EW_RES geo_transform[1]
+
+const std::string FORMAT = "GTiff";
     
 class GeoTool
 {
@@ -44,23 +58,27 @@ class GeoTool
         bool load_file(std::string const& filename);
         void print_info();
         bool load_image(int32_t width = GT_ALL, int32_t height = GT_ALL, int32_t offset_x = 0, int32_t offset_y = 0);
+        void set_output(std::string const& filename);
         
         void display_image(cv::Mat& image, uint32_t const& width, uint32_t const& height);
 
-        cv::Mat calc_slope();
-        cv::Mat calc_shaded_relief();
-
-        uint32_t get_num_bands() const { return _dataset->GetRasterCount(); } 
+        void slope();
+        void shaded_relief(float altitude = 45.f, float azimuth = 315.f);
+        
         Info getInfo() const { return _info; }       
                
                 
         void free_file();
 
     protected:
-        void get3x3kernel(float* kernel, uint32_t const& x, uint32_t const& y);
+        bool get3x3kernel(float* kernel, uint32_t const& x, uint32_t const& y);
+        void initOutput();
 
     private:             
-        GDALDataset* _dataset;
+        GDALDataset* _indataset;
+        GDALDataset* _outdataset;
+        GDALRasterBand* _inband;
+        GDALRasterBand* _outband;
         
         cv::Mat _image;
         Info _info;

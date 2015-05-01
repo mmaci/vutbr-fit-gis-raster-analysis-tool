@@ -2,55 +2,40 @@
 #include "GeoTool.h"
 #include <algorithm>
 
-GeoTool::GeoTool() : _dataset(nullptr)
+GeoTool::GeoTool()
 {    
     GDALAllRegister();    
 }
 
 bool GeoTool::load_file(std::string const& filename)
 {
-    _dataset = reinterpret_cast<GDALDataset*>(GDALOpen(filename.c_str(), GA_ReadOnly));          
-    return _dataset != nullptr;
-}
-
-void GeoTool::print_info()
-{   
-    std::cout << "Width: " << _dataset->GetRasterXSize() << std::endl;
-    std::cout << "Height: " << _dataset->GetRasterYSize() << std::endl;    
-}
-
-bool GeoTool::load_image(int32_t width, int32_t height, int32_t offset_x, int32_t offset_y)
-{
-    if ((width + offset_x > _dataset->GetRasterXSize()) || (height + offset_y > _dataset->GetRasterYSize()))
-    {
-        std::cerr << "Trying to load bigger raster than the actual size." << std::endl;
+    _indataset = reinterpret_cast<GDALDataset*>(GDALOpen(filename.c_str(), GA_ReadOnly));          
+    if (_indataset == nullptr)
         return false;
-    }
 
-    if (_dataset->GetRasterCount() > 1)
-    {
-        std::cerr << "More than one raster." << std::endl;
-        return false;
-    }
-    
-    if (width == GT_ALL && height == GT_ALL && offset_x == 0 && offset_y == 0)
-    {
-        width = _dataset->GetRasterXSize();
-        height = _dataset->GetRasterYSize();
-    }         
-
-    cv::Rect roi(offset_x, offset_y, width, height);
-    _image.create(roi.size(), CV_32F);
-
-    GDALRasterBand* band = _dataset->GetRasterBand(1);
-    band->RasterIO(GF_Read, 0, 0, width, height, _image.data, width, height, GDT_Float32, 0, 0);
-
-    _info.width = width;
-    _info.height = height;   
-    _info.offset_x = offset_x;
-    _info.offset_y = offset_y;    
+    _inband = _indataset->GetRasterBand(1);
+    _indataset->GetGeoTransform(_info.geo_transform);
+    _info.width = _indataset->GetRasterXSize();
+    _info.height = _indataset->GetRasterYSize();
+    _info.input_filename = filename;
+    _info.null_value = static_cast<float>(_inband->GetNoDataValue());
 
     return true;
+}
+
+
+void GeoTool::set_output(std::string const& filename)
+{
+    GDALDriver* driver;
+    driver = GetGDALDriverManager()->GetDriverByName(FORMAT.c_str());
+
+    _outdataset = driver->Create(filename.c_str(), _info.width, _info.height, 1, GDT_Byte, NULL);
+    _outdataset->SetGeoTransform(_info.geo_transform);
+    _outdataset->SetProjection(_indataset->GetProjectionRef());
+
+    _outband = _outdataset->GetRasterBand(1);
+    _outband->SetNoDataValue(0.0);
+
 }
 
 void GeoTool::display_image(cv::Mat& image, uint32_t const& width, uint32_t const& height)
@@ -70,73 +55,95 @@ void GeoTool::display_image(cv::Mat& image, uint32_t const& width, uint32_t cons
     cv::waitKey();    
 }
 
-void GeoTool::get3x3kernel(float* kernel, uint32_t const& x, uint32_t const& y)
+bool GeoTool::get3x3kernel(float* kernel, uint32_t const& x, uint32_t const& y)
 {
-    kernel[0] = _image.at<float>(y-1, x-1);
-    kernel[1] = _image.at<float>(y-1, x);
-    kernel[2] = _image.at<float>(y-1, x+1);
+    _inband->RasterIO(GF_Read, x - 1, y - 1, 3, 3, kernel, 3, 3, GDT_Float32, 0, 0);
 
-    kernel[3] = _image.at<float>(y, x-1);
-    kernel[4] = _image.at<float>(y, x);
-    kernel[5] = _image.at<float>(y, x+1);
-
-    kernel[6] = _image.at<float>(y+1, x-1);
-    kernel[7] = _image.at<float>(y+1, x);
-    kernel[8] = _image.at<float>(y+1, x+1);
-}
-
-cv::Mat GeoTool::calc_slope()
-{    
-    cv::Mat slope(_image.rows, _image.cols, CV_32FC1);
-    for (uint32_t x = 1; x < _image.cols-1; ++x)
+    for (int i = 0; i < 9; ++i)
     {
-        for (uint32_t y = 1; y < _image.rows-1; ++y)
-        {            
-            float kernel[9];
-            get3x3kernel(kernel, x, y);
-
-            float s_ew = ((kernel[0] + kernel[3] + kernel[3] + kernel[6]) - (kernel[2] + kernel[5] + kernel[5] + kernel[8])) / 8.f;
-            float s_ns = ((kernel[0] + kernel[1] + kernel[1] + kernel[2]) - (kernel[6] + kernel[7] + kernel[7] + kernel[8])) / 8.f;
-            
-            float tmp = sqrtf(s_ew * s_ew + s_ns * s_ns); 
-            slope.at<float>(y, x) = (tmp != tmp) ? 0 : tmp;            
-        }            
+        if (kernel[i] == _info.null_value)
+            return false;
     }
 
-    return slope;
+    return true;
 }
 
-cv::Mat GeoTool::calc_shaded_relief()
-{
-    float alt = 45;
-    float az = 315;
+void GeoTool::slope()
+{        
+    float* linebuffer = reinterpret_cast<float*>(CPLMalloc(sizeof(float) * _info.width));
+    
+    for (uint32_t i = 0; i < _info.width; ++i)
+        linebuffer[i] = 0.f;
 
-    cv::Mat relief(_image.rows, _image.cols, CV_32FC1);
-    for (uint32_t x = 1; x < _image.cols - 1; ++x)
+    // first and last line
+    _outband->RasterIO(GF_Write, 0, 0, _info.width, 1, linebuffer, _info.width, 1, GDT_Float32, 0, 0);
+    _outband->RasterIO(GF_Write, 0, _info.height-1, _info.width, 1, linebuffer, _info.width, 1, GDT_Float32, 0, 0);
+    
+    for (uint32_t y = 1; y < _info.height - 1; ++y)
     {
-        for (uint32_t y = 1; y < _image.rows - 1; ++y)
+        linebuffer[0] = 0.f;
+        linebuffer[_info.width - 1] = 0.0;
+
+        for (uint32_t x = 1; x < _info.width - 1; ++x)
+        {                                
+            float kernel[9];            
+            if (get3x3kernel(kernel, x, y))
+            {
+                float s_ew = ((kernel[0] + kernel[3] + kernel[3] + kernel[6]) - (kernel[2] + kernel[5] + kernel[5] + kernel[8])) / (8.f * _info.EW_RES);
+                float s_ns = ((kernel[0] + kernel[1] + kernel[1] + kernel[2]) - (kernel[6] + kernel[7] + kernel[7] + kernel[8])) / (8.f * _info.NS_RES);
+                float slope = sqrtf(s_ew * s_ew + s_ns * s_ns);
+                linebuffer[x] = slope * 255.f;
+            }
+            else {
+                linebuffer[x] = 0.f;
+            }                          
+        }    
+
+        _outband->RasterIO(GF_Write, 0, y, _info.width, 1, linebuffer, _info.width, 1, GDT_Float32, 0, 0);
+    }    
+}
+
+void GeoTool::shaded_relief(float altitude, float azimuth)
+{
+    float* linebuffer = reinterpret_cast<float*>(CPLMalloc(sizeof(float) * _info.width));
+
+    for (uint32_t i = 0; i < _info.width; ++i)
+        linebuffer[i] = 0.f;
+
+    // first and last line
+    _outband->RasterIO(GF_Write, 0, 0, _info.width, 1, linebuffer, _info.width, 1, GDT_Float32, 0, 0);
+    _outband->RasterIO(GF_Write, 0, _info.height - 1, _info.width, 1, linebuffer, _info.width, 1, GDT_Float32, 0, 0);
+
+    for (uint32_t y = 1; y < _info.height - 1; ++y)
+    {
+        linebuffer[0] = 0.f;
+        linebuffer[_info.width - 1] = 0.0;
+
+        for (uint32_t x = 1; x < _info.width - 1; ++x)
         {
             float kernel[9];
-            get3x3kernel(kernel, x, y);
+            if (get3x3kernel(kernel, x, y))
+            {
+                float s_ew = ((kernel[0] + kernel[3] + kernel[3] + kernel[6]) - (kernel[2] + kernel[5] + kernel[5] + kernel[8])) / (8.f * _info.EW_RES);
+                float s_ns = ((kernel[0] + kernel[1] + kernel[1] + kernel[2]) - (kernel[6] + kernel[7] + kernel[7] + kernel[8])) / (8.f * _info.NS_RES);
+                
+                float slope = 90.0 - atan(sqrtf(s_ew * s_ew + s_ns * s_ns)) * RAD2DEG;
+                float aspect = atan2(s_ew, s_ns);
 
-            float s_ew = ((kernel[0] + kernel[3] + kernel[3] + kernel[6]) - (kernel[2] + kernel[5] + kernel[5] + kernel[8])) / 8.f;
-            float s_ns = ((kernel[0] + kernel[1] + kernel[1] + kernel[2]) - (kernel[6] + kernel[7] + kernel[7] + kernel[8])) / 8.f;
-
-            float slope = 90.0 - atan(sqrtf(s_ew * s_ew + s_ns * s_ns)) * RAD2DEG;
-            float aspect = atan2(s_ew, s_ns);
-
-            float shaded = sin(alt * DEG2RAD) * sin(slope * DEG2RAD) +
-                cos(alt * DEG2RAD) * cos(slope * DEG2RAD) *
-                cos((az - 90.0) * DEG2RAD - aspect);
-
-            relief.at<float>(y, x) = shaded;
+                linebuffer[x] = (sin(altitude * DEG2RAD) * sin(slope * DEG2RAD) +
+                    cos(altitude * DEG2RAD) * cos(slope * DEG2RAD) *
+                    cos((azimuth - 90.0) * DEG2RAD - aspect)) * 255.f;                 
+            }
+            else {
+                linebuffer[x] = 0.f;
+            }            
         }
-    }
 
-    return relief;
+        _outband->RasterIO(GF_Write, 0, y, _info.width, 1, linebuffer, _info.width, 1, GDT_Float32, 0, 0);
+    }
 }
 
 void GeoTool::free_file()
 {
-    GDALClose(_dataset);
+    GDALClose(_indataset);
 }
