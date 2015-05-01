@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
     {
         gt.set_output(output);
 
-        cv::Mat res;
         switch (meth)
         {
             case METHOD_SLOPE:

@@ -7,12 +7,6 @@
 #include "gdal_priv.h"
 #include "cpl_conv.h"
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include <opencv2/nonfree/features2d.hpp>
-
 #define GT_NO_IMAGE -1
 #define GT_ALL -1
 
@@ -55,32 +49,23 @@ class GeoTool
     public:
         GeoTool();
 
-        bool load_file(std::string const& filename);
-        void print_info();
-        bool load_image(int32_t width = GT_ALL, int32_t height = GT_ALL, int32_t offset_x = 0, int32_t offset_y = 0);
-        void set_output(std::string const& filename);
-        
-        void display_image(cv::Mat& image, uint32_t const& width, uint32_t const& height);
+        bool load_file(std::string const& filename);                
+        void set_output(std::string const& filename);                
 
         void slope();
-        void shaded_relief(float altitude = 45.f, float azimuth = 315.f);
-        
-        Info getInfo() const { return _info; }       
-               
+        void shaded_relief(float altitude = 45.f, float azimuth = 315.f);                               
                 
         void free_file();
 
     protected:
-        bool get3x3kernel(float* kernel, uint32_t const& x, uint32_t const& y);
-        void initOutput();
+        bool get3x3kernel(float* kernel, uint32_t const& x, uint32_t const& y);        
 
     private:             
         GDALDataset* _indataset;
         GDALDataset* _outdataset;
         GDALRasterBand* _inband;
         GDALRasterBand* _outband;
-        
-        cv::Mat _image;
+                
         Info _info;
 };
 

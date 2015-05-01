@@ -1,6 +1,4 @@
-#include <iostream>
 #include "GeoTool.h"
-#include <algorithm>
 
 GeoTool::GeoTool()
 {    
@@ -36,23 +34,6 @@ void GeoTool::set_output(std::string const& filename)
     _outband = _outdataset->GetRasterBand(1);
     _outband->SetNoDataValue(0.0);
 
-}
-
-void GeoTool::display_image(cv::Mat& image, uint32_t const& width, uint32_t const& height)
-{    
-    double min_value, max_value;
-    cv::minMaxLoc(image, &min_value, &max_value);
-    for (uint32_t x = 1; x < image.cols - 1; ++x)
-    {
-        for (uint32_t y = 1; y < image.rows - 1; ++y)        
-            image.at<float>(y, x) /= max_value;        
-    }
-
-    cv::Mat resized;
-    cv::resize(image, resized, cv::Size(width, height), 0.0, 0.0, CV_INTER_LANCZOS4);
-
-    cv::imshow("Display", resized);
-    cv::waitKey();    
 }
 
 bool GeoTool::get3x3kernel(float* kernel, uint32_t const& x, uint32_t const& y)
