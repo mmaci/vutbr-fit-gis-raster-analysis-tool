@@ -1,10 +1,10 @@
 /** @file GeoTool.cpp
-* @brief Geographical tool.
-*
-* A set of tools for geographical raster analysis.
-*
-* @author Pavel Macenauer <macenauer.p@gmail.com>
-*/
+ * @brief Geographical tool.
+ * 
+ * A set of tools for geographical raster analysis.
+ *
+ * @author Pavel Macenauer <macenauer.p@gmail.com>
+ */
 
 #include "GeoTool.h"
 #include <set>
