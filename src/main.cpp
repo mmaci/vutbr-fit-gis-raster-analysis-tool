@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
         }
 
         if ((std::string(argv[i]) == "-c" || std::string(argv[i]) == "--coords") && i + 1 < argc) {
-            coordsfile = atoi(argv[++i]);
+            coordsfile = argv[++i];
         }
     }
 
